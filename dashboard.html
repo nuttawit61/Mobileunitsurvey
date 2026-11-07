@@ -466,11 +466,10 @@
       $('app').innerHTML = h; return;
     }
 
-    h += '<div class="grid2">';
     const single = state.from === state.to;
-    if (single) { const hs = hourSeries(rows); h += `<div class="card"><h2>จำนวนผู้ตอบรายชั่วโมง</h2><p class="desc">ตามเวลาที่ส่งแบบประเมิน${hs.other ? ' · นอกช่วง 06–20 น. ' + hs.other + ' คน' : ''}</p>${bars2svg(hs.bars, 'จำนวนผู้ตอบรายชั่วโมง')}</div>`; }
-    else h += `<div class="card"><h2>จำนวนผู้ตอบรายวัน</h2><p class="desc">คลิกแท่งเพื่อดูเฉพาะวันนั้น</p>${barChart(days)}</div>`;
-    const trendDays = single ? dailySeries(state.rows.filter(r => (!state.age || r.age === state.age) && (!state.exp || r.exp === state.exp)), addDays(state.from, -6), state.from) : days;
+    h += single ? '<div>' : '<div class="grid2">';
+    if (!single) h += `<div class="card"><h2>จำนวนผู้ตอบรายวัน</h2><p class="desc">คลิกแท่งเพื่อดูเฉพาะวันนั้น</p>${barChart(days)}</div>`;
+    const trendDays = single ? dailySeries(state.rows.filter(r => (!state.age || r.age === state.age) && (!state.exp || r.exp === state.exp) && (!state.loc || r.loc === state.loc)), addDays(state.from, -6), state.from) : days;
     h += `<div class="card"><div class="card-head"><div><h2>${state.trend === 'pct' ? 'ร้อยละผู้ตอบที่คะแนนรวม &gt; 4 รายวัน' : 'คะแนนเฉลี่ยรายวัน'}</h2><p class="desc">${single ? '7 วันล่าสุดถึงวันที่เลือก · ' : ''}วันที่ไม่มีผู้ตอบจะเว้นช่วงเส้น</p></div><div class="tools"><div class="seg"><button data-trend="pct" class="${state.trend === 'pct' ? 'active' : ''}">% &gt; 4</button><button data-trend="mean" class="${state.trend === 'mean' ? 'active' : ''}">คะแนนเฉลี่ย</button></div></div></div>${lineChart(trendDays, state.trend)}</div>`;
     h += '</div>';
 
