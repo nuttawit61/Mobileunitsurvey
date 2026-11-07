@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<script>try { if (sessionStorage.getItem('mobileunit2570_token')) document.documentElement.className += ' has-session'; } catch (e) {}</script>
 <title>Dashboard ความพึงพอใจ หน่วยรับบริจาคเลือดเคลื่อนที่ 2570</title>
 <style>
   :root {
@@ -136,6 +137,8 @@
   .lbtn[disabled] { opacity: .65; cursor: progress; }
   .lnote { font-size: 12px; color: var(--muted); margin: 6px 0 0; border-top: 1px solid var(--line); padding-top: 12px; text-align: center; }
   body.locked .wrap { display: none; }
+  html.has-session .login { display: none; }
+  html.has-session body.locked .wrap { display: block; }
   .loc-chip { display: inline-flex; gap: 5px; align-items: center; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 2px 9px; font-size: 12px; margin: 2px 4px 2px 0; cursor: pointer; white-space: nowrap; }
   .loc-chip b { color: var(--brand); font-weight: 600; }
   .loc-chip:hover { border-color: var(--s3); }
@@ -801,6 +804,7 @@
     });
   }
   function showLogin(message) {
+    document.documentElement.classList.remove('has-session');
     document.body.classList.add('locked');
     $('login').hidden = false;
     $('loginErr').textContent = message || '';
@@ -838,6 +842,7 @@
   function load() {
     const token = store.get();
     if (!token) { showLogin(''); return; }
+    showApp();
     $('refreshBtn').disabled = true;
     if (!state.loaded) $('app').innerHTML = '<div class="loading">กำลังโหลดข้อมูลจาก Google Sheet…</div>';
     server('getDashboardData', token).then(data => {
