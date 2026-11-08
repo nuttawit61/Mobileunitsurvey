@@ -462,6 +462,18 @@
       document.getElementById('stepDots').innerHTML = steps.map((name, i) => `<span class="step-dot ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}">${i+1}. ${name}</span>`).join('');
     }
 
+    // เลื่อนไปที่หัวชุดคำถาม (ไม่ใช่บนสุดของหน้า) เพื่อไม่ให้ส่วนหัวกินพื้นที่บนมือถือ
+    let stepShownOnce = false;
+    function scrollToForm(id) {
+      // รอให้หน้าจัดเลย์เอาต์ใหม่เสร็จก่อน (เนื้อหาแต่ละขั้นยาวไม่เท่ากัน)
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const y = el.getBoundingClientRect().top + window.scrollY - 12;
+        const far = Math.abs(window.scrollY - y) > window.innerHeight * 1.5;
+        window.scrollTo({ top: Math.max(0, y), behavior: far ? 'auto' : 'smooth' });
+      }));
+    }
     function showStep(index) {
       currentStep = index;
       document.querySelectorAll('.step-panel').forEach(panel => panel.classList.toggle('active', Number(panel.dataset.step) === index));
@@ -474,7 +486,8 @@
       document.getElementById('submitBtn').hidden = index !== steps.length-1;
       document.getElementById('errorBox').style.display = 'none';
       renderDots();
-      window.scrollTo({top: 0, behavior: 'smooth'});
+      if (stepShownOnce) scrollToForm('progressArea');
+      stepShownOnce = true;
     }
 
     function showError(message) {
@@ -585,7 +598,7 @@
       form.querySelector('h2').textContent = title;
       form.querySelector('p').textContent = message;
       document.querySelector('.footnote').hidden = true;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToForm('formCard');
     }
 
     document.getElementById('surveyForm').addEventListener('submit', event => {
